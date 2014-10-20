@@ -14,6 +14,8 @@
 #include "compute_solution.h"
 #include "finalization.h"
 
+#include <papi.h>
+
 int main(int argc, char *argv[]) {
     int i;
 
@@ -39,6 +41,17 @@ int main(int argc, char *argv[]) {
    
  
     char *file_in = argv[1];
+
+    /* measuring variables */
+	int const n = 5;
+	long_long start_usec, end_usec;
+	long_long counters[n];
+	int PAPI_events[5] = {
+		PAPI_L2_DCM,
+		PAPI_L2_DCA,
+		PAPI_L3_TCM,
+		PAPI_L3_DCA,
+		PAPI_FP_INS };
  
     /********** START INITIALIZATION **********/
     // read-in the input file
@@ -51,17 +64,38 @@ int main(int argc, char *argv[]) {
         abort();
     } 
 
+	//if ( PAPI_library_init( PAPI_VER_CURRENT ) != PAPI_VER_CURRENT ) exit(1);
+
+//printf("Counters %d \n", PAPI_num_counters());
+
    
     /********** END INITIALIZATION **********/
 
     /********** START COMPUTATIONAL LOOP **********/
+if (PAPI_start_counters( PAPI_events, n ) != PAPI_OK) { 
+      printf("Could not PAPI_start_counters \n");
+        exit(1);
+     }
+
+	start_usec = PAPI_get_real_usec();
+
     int total_iters = compute_solution(max_iters, nintci, nintcf, nextcf, lcc, bp, bs, bw, bl, bn,
                                        be, bh, cnorm, var, su, cgup, &residual_ratio);
+
+	end_usec = PAPI_get_real_usec();
+if (PAPI_stop_counters( counters, n ) != PAPI_OK) { 
+      printf("Could not PAPI_read_counters \n");
+        exit(1);
+     }
+	
     /********** END COMPUTATIONAL LOOP **********/
 
     /********** START FINALIZATION **********/
     finalization(file_in, total_iters, residual_ratio, nintci, nintcf, var, cgup, su);
     /********** END FINALIZATION **********/
+
+printf("%lld %lld %lld %lld %lld\n",counters[0],counters[1], counters[2] , counters[3] , counters[4]);
+	printf("%f %f %f %f\n", (double)(end_usec-start_usec)/1e6, (double)counters[4]/(end_usec-start_usec), (double)counters[0] / (double)counters[1], (double)counters[2] / (double)counters[3]);
 
 
     free(cnorm);
