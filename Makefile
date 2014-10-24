@@ -4,9 +4,11 @@
 #                                                                  #
 ####################################################################
 
-CC = mpicc
-CFLAGS = -Wall -O1 
-LIBS = -lm -lpapi
+CC = mpicc 
+CFLAGS = -Wall $(PAPI_INC)
+EXTRAFLAGS =
+LIBS = -lm $(PAPI_LIB)
+OUT = gccg
 
 LIBPOS=libpos.a
 AR = ar
@@ -18,10 +20,10 @@ OBJS =  $(addsuffix .o, $(basename $(SRCS)))
 all: gccg 
 
 %.o: %.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -c -o $@ $< $(CFLAGS) $(EXTRAFLAGS)
 
 gccg: gccg.c $(LIBPOS)
-	$(CC) -o $@ $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $(OUT) $^ $(CFLAGS) $(EXTRAFLAGS) $(LIBS)
 
 $(LIBPOS) : $(OBJS)
 	$(AR) $(ARFLAGS) $@ $+
