@@ -14,7 +14,7 @@
 #include "compute_solution.h"
 #include "finalization.h"
 
-#include <papi.h>
+//#include <papi.h>
 
 int main(int argc, char *argv[]) {
     int i;
@@ -38,9 +38,19 @@ int main(int argc, char *argv[]) {
     /** Additional vectors required for the computation */
     double *cgup, *oc, *cnorm;
 
-   
- 
-    char *file_in = argv[1];
+   /*
+	gccg needs 3 arguments:
+	gccg <format> <input file> <output prefix>
+	*/
+	if (argc!=4){
+			printf("wrong parameters!!\ncall: gccg <format> <input file> <output prefix>\n");
+			exit(1);
+			}
+
+
+	char *format = argv[1];
+	char *file_in = argv[2];
+	char *out_pref = argv[3];
 
     /* measuring variables */
 	int const n = 5;
@@ -52,27 +62,27 @@ int main(int argc, char *argv[]) {
 		PAPI_L3_TCM,
 		PAPI_L3_DCA,
 		PAPI_FP_INS };
- 
+
     /********** START INITIALIZATION **********/
     // read-in the input file
     int init_status = initialization(file_in, &nintci, &nintcf, &nextci, &nextcf, &lcc,
-                                     &bs, &be, &bn, &bw, &bl, &bh, &bp, &su, &var, &cgup, &oc, 
-                                     &cnorm);
+                                     &bs, &be, &bn, &bw, &bl, &bh, &bp, &su, &var, &cgup, &oc,
+                                     &cnorm, format);
 
     if ( init_status != 0 ) {
         fprintf(stderr, "Failed to initialize data!\n");
         abort();
-    } 
+    }
 
 	//if ( PAPI_library_init( PAPI_VER_CURRENT ) != PAPI_VER_CURRENT ) exit(1);
 
-//printf("Counters %d \n", PAPI_num_counters());
+printf("Counters %d \n", PAPI_num_counters());
 
-   
+
     /********** END INITIALIZATION **********/
 
     /********** START COMPUTATIONAL LOOP **********/
-if (PAPI_start_counters( PAPI_events, n ) != PAPI_OK) { 
+if (PAPI_start_counters( PAPI_events, n ) != PAPI_OK) {
       printf("Could not PAPI_start_counters \n");
         exit(1);
      }
@@ -83,11 +93,11 @@ if (PAPI_start_counters( PAPI_events, n ) != PAPI_OK) {
                                        be, bh, cnorm, var, su, cgup, &residual_ratio);
 
 	end_usec = PAPI_get_real_usec();
-if (PAPI_stop_counters( counters, n ) != PAPI_OK) { 
+if (PAPI_stop_counters( counters, n ) != PAPI_OK) {
       printf("Could not PAPI_read_counters \n");
         exit(1);
      }
-	
+
     /********** END COMPUTATIONAL LOOP **********/
 
     /********** START FINALIZATION **********/
@@ -119,7 +129,7 @@ for ( i = 0; i < 6; ++i)
         free(lcc[i]);
     }
    free(lcc);
- 
+
     return 0;
 }
 

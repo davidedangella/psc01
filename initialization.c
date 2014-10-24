@@ -13,12 +13,22 @@
 int initialization(char* file_in, int* nintci, int* nintcf, int* nextci,
                    int* nextcf, int*** lcc, double** bs, double** be, double** bn, double** bw,
                    double** bl, double** bh, double** bp, double** su, double** var, double** cgup, 
-                   double** oc, double** cnorm) {
+                   double** oc, double** cnorm, char* format) {
     /********** START INITIALIZATION **********/
     int i = 0;
     // read-in the input file
-    int f_status = read_formatted(file_in, &*nintci, &*nintcf, &*nextci, &*nextcf, &*lcc, &*bs,
-                                   &*be, &*bn, &*bw, &*bl, &*bh, &*bp, &*su);
+    int f_status = 1;
+	if(strcmp(format, "text")==0)	
+	{
+		f_status = read_formatted(file_in, &*nintci, &*nintcf, &*nextci, &*nextcf, &*lcc, &*bs,
+		                   &*be, &*bn, &*bw, &*bl, &*bh, &*bp, &*su);
+	}
+	else if(strcmp(format, "bin")==0)	
+		{
+		f_status = read_formatted_bin(file_in, &*nintci, &*nintcf, &*nextci, &*nextcf, &*lcc, &*bs,
+				   &*be, &*bn, &*bw, &*bl, &*bh, &*bp, &*su);
+		}
+	
 
     if ( f_status != 0 ) return f_status;
 
