@@ -1,0 +1,25 @@
+# This job command file is called job.cmd
+# input= in.genjob%ID%
+#@ output = out.genjob%ID%
+#@ error = err.genjob%ID%
+#@ job_type = parallel
+#@ class = test
+#@ node = 1
+#@ total_tasks=1
+#@ wall_clock_limit =0:30:0
+# network.MPI = sn_all,not_shared,us
+# ... other LoadLeveler keywords (see below)
+#@ queue
+#@ energy_policy_tag = my_energy_tag
+#@ minimize_time_to_solution = yes
+echo "%MSG%"
+
+rm -f out%ID%.stats
+
+for i in `seq 1 3`;
+do
+        ./gccg_%ID% %INPUT%  | grep measurements | cut -d";" -f2- | xargs echo "Run $i;" >> out%ID%.stats
+done
+
+cat out%ID%.stats
+cat out%ID%.stats |  awk -F';' '{ sum2+=$2; sum3+=$3; sum4+=$4; sum5+=$5; sum6+=$6; sum7+=$7;} END {print "Average;" sum2/NR ";" sum3/NR ";" sum4/NR ";" sum5/NR ";" sum6/NR ";" sum7/NR}'
