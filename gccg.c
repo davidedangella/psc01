@@ -46,28 +46,9 @@ int main(int argc, char *argv[]) {
     /** Additional vectors required for the computation */
     double *cgup, *oc, *cnorm;
 
-<<<<<<< HEAD
-   
- 
-    char *file_in = argv[1];
+	int nodeCnt, **points, **elems;
 
-    /* measuring variables */
-#ifdef MISSES
-	long_long start_usec, end_usec;
-	long_long counters[N];
-	int PAPI_events[N] = {	PAPI_L2_TCM,
-				PAPI_L2_TCA,
-				PAPI_L3_TCM,
-				PAPI_L3_TCA };
-#else
-	float rtime, ptime, mflops;
-	long_long flpops;
-#endif
- 
-=======
-    int nodeCnt, **points, **elems;
-
-   /*
+   	/*
 	gccg needs 3 arguments:
 	gccg <format> <input file> <output prefix>
 	*/
@@ -82,19 +63,20 @@ int main(int argc, char *argv[]) {
 	char *out_pref = argv[3];
 	char *outFileName=malloc(sizeof(char)*50);
 
-    /* measuring variables */
-/*	int const n = 5;
-	long_long start_usec, end_usec;
-	long_long counters[n];
-	int PAPI_events[5] = {
-		PAPI_L2_DCM,
-		PAPI_L2_DCA,
-		PAPI_L3_TCM,
-		PAPI_L3_DCA,
-		PAPI_FP_INS };
-*/
 
->>>>>>> 7427b8f6930c342ef4006afc153ca5488af86c44
+    /* measuring variables */
+#ifdef MISSES
+	long_long start_usec, end_usec;
+	long_long counters[N];
+	int PAPI_events[N] = {	PAPI_L2_TCM,
+				PAPI_L2_TCA,
+				PAPI_L3_TCM,
+				PAPI_L3_TCA };
+#else
+	float rtime, ptime, mflops;
+	long_long flpops;
+#endif
+ 
     /********** START INITIALIZATION **********/
     // read-in the input file
     int init_status = initialization(file_in, &nintci, &nintcf, &nextci, &nextcf, &lcc,
@@ -111,37 +93,24 @@ if ( PAPI_library_init( PAPI_VER_CURRENT ) != PAPI_VER_CURRENT ) {
         exit(1);
      }
 
-//	printf("Counters %d \n", PAPI_num_counters());
-
-
     /********** END INITIALIZATION **********/
 
     /********** START COMPUTATIONAL LOOP **********/
-<<<<<<< HEAD
+
 #ifdef MISSES
 if (PAPI_start_counters( PAPI_events, N ) != PAPI_OK) { 
-=======
-/*
-if (PAPI_start_counters( PAPI_events, n ) != PAPI_OK) {
->>>>>>> 7427b8f6930c342ef4006afc153ca5488af86c44
       printf("Could not PAPI_start_counters \n");
         exit(1);
      }
 
-<<<<<<< HEAD
 start_usec = PAPI_get_real_usec();
 #else
  PAPI_flops( &rtime, &ptime, &flpops, &mflops );
 #endif
-=======
-	start_usec = PAPI_get_real_usec();
-*/
->>>>>>> 7427b8f6930c342ef4006afc153ca5488af86c44
 
     int total_iters = compute_solution(max_iters, nintci, nintcf, nextcf, lcc, bp, bs, bw, bl, bn,
                                        be, bh, cnorm, var, su, cgup, &residual_ratio);
 
-<<<<<<< HEAD
 #ifdef MISSES
 end_usec = PAPI_get_real_usec();
 
@@ -159,30 +128,16 @@ printf("measurements_mflops;%f;%f\n", rtime, mflops);
 
 PAPI_shutdown();
 	
-=======
-/*
-	end_usec = PAPI_get_real_usec();
-if (PAPI_stop_counters( counters, n ) != PAPI_OK) {
-      printf("Could not PAPI_read_counters \n");
-        exit(1);
-     }
-*/
->>>>>>> 7427b8f6930c342ef4006afc153ca5488af86c44
     /********** END COMPUTATIONAL LOOP **********/
 
     /********** START FINALIZATION **********/
     finalization(file_in, total_iters, residual_ratio, nintci, nintcf, var, cgup, su);
     /********** END FINALIZATION **********/
 
-<<<<<<< HEAD
-
-
-
-=======
 	/**************** Writing VTK files ************/
 	
 	if( vol2mesh( nintci, nintcf, lcc, &nodeCnt, &points, &elems) !=0 ){
-		printf("error VTK files!\n");	
+		printf("vol2mesh error\n");	
 	}
 	
 	strcpy(outFileName, out_pref);
@@ -194,12 +149,6 @@ if (PAPI_stop_counters( counters, n ) != PAPI_OK) {
 
 	/************** END writing VTK ****************/
 	
-		
-/*	
-	printf("%lld %lld %lld %lld %lld\n",counters[0],counters[1], counters[2] , counters[3] , counters[4]);
-	printf("%f %f %f %f\n", (double)(end_usec-start_usec)/1e6, (double)counters[4]/(end_usec-start_usec), (double)counters[0] / (double)counters[1], (double)counters[2] / (double)counters[3]);
-*/
->>>>>>> 7427b8f6930c342ef4006afc153ca5488af86c44
 
     free(cnorm);
     free(var);
