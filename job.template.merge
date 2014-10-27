@@ -22,4 +22,8 @@ do
 done
 
 cat out%ID%.stats
-cat out%ID%.stats |  awk -F';' '{ sum2+=$2; sum3+=$3;} END {print "Average;" sum2/NR ";" sum3/NR ";"}'
+cat out%ID%.stats |  awk -F';' '{ sum2+=$2; sum3+=$3;} END {print "Average;"  sum2/NR ";" sum3/NR ";"}'
+#cat out%ID%.stats |  awk -F';' '{ sum2+=$2; sum3+=$3; sum4+=$4; sum5+=$5; sum6+=$6; sum7+=$7;} END {print "Average;"  sum2/NR ";" sum3/NR ";" sum4/NR ";" sum5/NR ";" sum6/NR ";" sum7/NR ";"}'
+
+
+paste %JOINF% out.genjob%ID% > out.merged.genjob%ID%

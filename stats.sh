@@ -5,25 +5,27 @@
 id=1
 
 declare -a aopt=("-O1" "-O3")
-declare -a avec=("-no-vec" "-vec -vec-report3" "-xhost -vec-report3")
+declare -a avec=("-no-vec" "" "-xhost")
 declare -a ainput=("cojack.dat" "tjunc.dat")
 #declare -a adefs=("-DMISSES" "")
-declare -a adefs=("")
+#declare -a adefs=("")
 
 
 ## now loop through the above array
-for input in "${ainput[@]}"
+
+for opt in "${aopt[@]}"
 do
 for vec in "${avec[@]}"
 do
-for opt in "${aopt[@]}"
+for input in "${ainput[@]}"
 do
-for defs in "${adefs[@]}"
-do
+
+#for defs in "${adefs[@]}"
+#do
 
 
 	echo "measurements $id ****************************************************************************************"
-	echo "measurements $id: $opt $vec $defs $input"
+	echo "measurements $id: $opt $vec $input"
 	echo "measurements $id ****************************************************************************************"
 
 	make clean
@@ -32,17 +34,32 @@ do
 	make EXTRAFLAGS="$opt $vec $defs" OUT=gccg_$id
 
 #	msg="$id: $opt $vec $defs $input\;L2 Miss Rate\; L3 Miss Rate\;"
-msg="$id: $opt $vec $defs $input\;Execution Time\; MFlops\;"
+	msg="$id: $opt $vec $defs $input\;Execution Time\; MFlops\;"
 	echo $msg
 	sed -e "s;%ID%;$id;g" -e "s;%MSG%;$msg;g" -e "s;%INPUT%;$input;g" job.template > genjob$id.cmd
 
 	llsubmit genjob$id.cmd
+id_old=$id
+id=$((id+1))
+
+	make clean
+
+	echo "!call make EXTRAFLAGS=$opt $vec $defs -DMISSES"
+	make EXTRAFLAGS="$opt $vec $defs -DMISSES" OUT=gccg_$id
+
+	msg="id: $opt $vec $defs $input\;L2 Miss Rate\; L3 Miss Rate\;"
+#	msg="$id: $opt $vec $defs $input\;Execution Time\; MFlops\;"
+	echo $msg
+	sed -e "s;%ID%;$id;g" -e "s;%MSG%;$msg;g" -e "s;%INPUT%;$input;g" -e "s;%JOINF%;out.genjob$id_old;g" job.template.merge > genjob$id.cmd
+
+	llsubmit genjob$id.cmd
+
 
 id=$((id+1))
 
 
 
-done
+#done
 done
 done
 done

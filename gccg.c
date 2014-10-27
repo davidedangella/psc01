@@ -123,7 +123,7 @@ if (PAPI_stop_counters( counters, N ) != PAPI_OK) {
 printf("measurements_misses;%f;%f;\n",  (double)counters[0] / (double)counters[1], (double)counters[2] / (double)counters[3]);
 #else
  PAPI_flops( &rtime, &ptime, &flpops, &mflops );
-printf("measurements_mflops;%f;%f\n", rtime, mflops);
+printf("measurements_mflops;%f;%f;\n", rtime, mflops);
 #endif
 
 PAPI_shutdown();
