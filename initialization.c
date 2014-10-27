@@ -13,22 +13,27 @@
 int initialization(char* file_in, int* nintci, int* nintcf, int* nextci,
                    int* nextcf, int*** lcc, double** bs, double** be, double** bn, double** bw,
                    double** bl, double** bh, double** bp, double** su, double** var, double** cgup, 
-                   double** oc, double** cnorm, char* format) {
+                   double** oc, double** cnorm, char* format, long_long* readingtime) {
     /********** START INITIALIZATION **********/
     int i = 0;
+	long_long start_usec, end_usec;
     // read-in the input file
     int f_status = 1;
 	if(strcmp(format, "text")==0)	
-	{
+	{	
+		start_usec=PAPI_get_real_usec();
 		f_status = read_formatted(file_in, &*nintci, &*nintcf, &*nextci, &*nextcf, &*lcc, &*bs,
 		                   &*be, &*bn, &*bw, &*bl, &*bh, &*bp, &*su);
+		end_usec=PAPI_get_real_usec();
 	}
 	else if(strcmp(format, "bin")==0)	
 		{
+		start_usec=PAPI_get_real_usec();
 		f_status = read_formatted_bin(file_in, &*nintci, &*nintcf, &*nextci, &*nextcf, &*lcc, &*bs,
 				   &*be, &*bn, &*bw, &*bl, &*bh, &*bp, &*su);
+		end_usec=PAPI_get_real_usec();
 		}
-	
+	*readingtime=end_usec-start_usec;	
 
     if ( f_status != 0 ) return f_status;
 

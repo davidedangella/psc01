@@ -45,6 +45,7 @@ int main(int argc, char *argv[]) {
 
     /** Additional vectors required for the computation */
     double *cgup, *oc, *cnorm;
+	long_long readingtime;
 
 	int nodeCnt, **points, **elems;
 
@@ -79,9 +80,9 @@ int main(int argc, char *argv[]) {
  
     /********** START INITIALIZATION **********/
     // read-in the input file
-    int init_status = initialization(file_in, &nintci, &nintcf, &nextci, &nextcf, &lcc,
+	int init_status = initialization(file_in, &nintci, &nintcf, &nextci, &nextcf, &lcc,
                                      &bs, &be, &bn, &bw, &bl, &bh, &bp, &su, &var, &cgup, &oc,
-                                     &cnorm, format);
+                                     &cnorm, format, &readingtime);
 
     if ( init_status != 0 ) {
         fprintf(stderr, "Failed to initialize data!\n");
@@ -120,10 +121,10 @@ if (PAPI_stop_counters( counters, N ) != PAPI_OK) {
      }
 
 //	printf("measurements misses: %f;%f;%f;%f\n", (double)(end_usec-start_usec)/1e6, (double)counters[4]/(double)(end_usec-start_usec), (double)counters[0] / (double)counters[1], (double)counters[2] / (double)counters[3]);
-printf("measurements_misses;%f;%f;\n",  (double)counters[0] / (double)counters[1], (double)counters[2] / (double)counters[3]);
+printf("measurements_misses;%f;%f;%f;\n",  (double)counters[0] / (double)counters[1], (double)counters[2] / (double)counters[3],(double)readingtime/1e6);
 #else
  PAPI_flops( &rtime, &ptime, &flpops, &mflops );
-printf("measurements_mflops;%f;%f;\n", rtime, mflops);
+printf("measurements_mflops;%f;%f;%f;\n", rtime, mflops, (double)readingtime/1e6);
 #endif
 
 PAPI_shutdown();

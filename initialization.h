@@ -7,11 +7,11 @@
 
 #ifndef INITIALIZATION_H_
 #define INITIALIZATION_H_
-
+#include <papi.h>
 int initialization(char* file_in, int* nintci, int* nintcf, int* nextci,
                    int* nextcf, int*** lcc, double** bs, double** be, double** bn, double** bw,
                    double** bl, double** bh, double** bp, double** su, double** var, double** cgup, 
-                   double** oc, double** cnorm, char* format);
+                   double** oc, double** cnorm, char* format, long_long* readingtime);
 
 #endif /* INITIALIZATION_H_ */
 
