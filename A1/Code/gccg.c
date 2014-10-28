@@ -142,11 +142,11 @@ PAPI_shutdown();
 	}
 	
 	strcpy(outFileName, out_pref);
-	write_result_vtk( strcat(outFileName,".SU.vtk") , nintci, nintcf, nodeCnt, points, elems, su);
+	write_result_vtk( strcat(outFileName,"SU.vtk") , nintci, nintcf, nodeCnt, points, elems, su);
 	strcpy(outFileName, out_pref);
-	write_result_vtk( strcat(outFileName,".VAR.vtk") , nintci, nintcf, nodeCnt, points, elems, var);
+	write_result_vtk( strcat(outFileName,"VAR.vtk") , nintci, nintcf, nodeCnt, points, elems, var);
 	strcpy(outFileName, out_pref);
-	write_result_vtk( strcat(outFileName,".CGUP.vtk") , nintci, nintcf, nodeCnt, points,  elems, cgup);
+	write_result_vtk( strcat(outFileName,"CGUP.vtk") , nintci, nintcf, nodeCnt, points,  elems, cgup);
 
 	/************** END writing VTK ****************/
 	
