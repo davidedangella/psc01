@@ -21,6 +21,8 @@
 
 #ifdef MISSES
 #define N 4
+#else
+#define N 1
 #endif
 
 
@@ -66,16 +68,17 @@ int main(int argc, char *argv[]) {
 
 
     /* measuring variables */
-#ifdef MISSES
+
 	long_long start_usec, end_usec;
 	long_long counters[N];
+
+#ifdef MISSES
 	int PAPI_events[N] = {	PAPI_L2_TCM,
 				PAPI_L2_TCA,
 				PAPI_L3_TCM,
 				PAPI_L3_TCA };
 #else
-	float rtime, ptime, mflops;
-	long_long flpops;
+	int PAPI_events[N] = {	PAPI_DP_OPS };
 #endif
  
     /********** START INITIALIZATION **********/
@@ -98,33 +101,27 @@ if ( PAPI_library_init( PAPI_VER_CURRENT ) != PAPI_VER_CURRENT ) {
 
     /********** START COMPUTATIONAL LOOP **********/
 
-#ifdef MISSES
+
 if (PAPI_start_counters( PAPI_events, N ) != PAPI_OK) { 
       printf("Could not PAPI_start_counters \n");
         exit(1);
      }
 
-start_usec = PAPI_get_real_usec();
-#else
- PAPI_flops( &rtime, &ptime, &flpops, &mflops );
-#endif
-
+start_usec = PAPI_get_virt_usec();
     int total_iters = compute_solution(max_iters, nintci, nintcf, nextcf, lcc, bp, bs, bw, bl, bn,
                                        be, bh, cnorm, var, su, cgup, &residual_ratio);
-
-#ifdef MISSES
-end_usec = PAPI_get_real_usec();
+end_usec = PAPI_get_virt_usec();
 
 if (PAPI_stop_counters( counters, N ) != PAPI_OK) { 
       printf("Could not PAPI_stop_counters \n");
         exit(1);
      }
 
+#ifdef MISSES
 //	printf("measurements misses: %f;%f;%f;%f\n", (double)(end_usec-start_usec)/1e6, (double)counters[4]/(double)(end_usec-start_usec), (double)counters[0] / (double)counters[1], (double)counters[2] / (double)counters[3]);
 printf("measurements_misses;%f;%f;%f;\n",  (double)counters[0] / (double)counters[1], (double)counters[2] / (double)counters[3],(double)readingtime/1e6);
 #else
- PAPI_flops( &rtime, &ptime, &flpops, &mflops );
-printf("measurements_mflops;%f;%f;%f;\n", rtime, mflops, (double)readingtime/1e6);
+printf("measurements_mflops;%f;%f;%f;\n", (double)(end_usec-start_usec)/(double)1e6, (double)counters[0]/(double)(end_usec-start_usec), (double)readingtime/1e6);
 #endif
 
 PAPI_shutdown();

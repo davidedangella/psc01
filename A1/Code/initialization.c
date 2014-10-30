@@ -21,17 +21,17 @@ int initialization(char* file_in, int* nintci, int* nintcf, int* nextci,
     int f_status = 1;
 	if(strcmp(format, "text")==0)	
 	{	
-		start_usec=PAPI_get_real_usec();
+		start_usec=PAPI_get_virt_usec();
 		f_status = read_formatted(file_in, &*nintci, &*nintcf, &*nextci, &*nextcf, &*lcc, &*bs,
 		                   &*be, &*bn, &*bw, &*bl, &*bh, &*bp, &*su);
-		end_usec=PAPI_get_real_usec();
+		end_usec=PAPI_get_virt_usec();
 	}
 	else if(strcmp(format, "bin")==0)	
 		{
-		start_usec=PAPI_get_real_usec();
+		start_usec=PAPI_get_virt_usec();
 		f_status = read_formatted_bin(file_in, &*nintci, &*nintcf, &*nextci, &*nextcf, &*lcc, &*bs,
 				   &*be, &*bn, &*bw, &*bl, &*bh, &*bp, &*su);
-		end_usec=PAPI_get_real_usec();
+		end_usec=PAPI_get_virt_usec();
 		}
 	*readingtime=end_usec-start_usec;	
 

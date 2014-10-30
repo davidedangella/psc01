@@ -18,8 +18,8 @@ rm -f out%ID%.stats
 
 for i in `seq 1 3`;
 do
-        ./gccg_%ID% text %INPUT% run%ID%.  | grep measurements | cut -d";" -f2- | xargs echo "Run $i;" >> out%ID%.stats
+        ./gccg_%ID% %INPUT% run%ID%.  | grep measurements | cut -d";" -f2- | xargs echo "Run $i;" >> out%ID%.stats
 done
 
 cat out%ID%.stats
-cat out%ID%.stats |  awk -F';' '{ sum2+=$2; sum3+=$3;} END {print "Average;" sum2/NR ";" sum3/NR ";"}'
+cat out%ID%.stats |  awk -F';' '{ sum2+=$2; sum3+=$3; sum4+=$4;} END {print "Average;" sum2/NR ";" sum3/NR ";" sum4/NR ";"}'
