@@ -84,12 +84,12 @@ int main(int argc, char *argv[]) {
 			exit(1);
 			}
 
-	if(strcmp(get_filename_ext(argv[1]), "bin")!=0){
-			printf("Fist argument must be a bin file\n");
+	if(strcmp(get_filename_ext(argv[1]), "dat")!=0){
+			printf("First argument must be a dat file\n");
 			exit(1);
 			}
-	if(strcmp(get_filename_ext(argv[2]), "dat")!=0){
-			printf("Second argument must be a dat file\n");
+	if(strcmp(get_filename_ext(argv[2]), "bin")!=0){
+			printf("Second argument must be a bin file\n");
 			exit(1);
 			}
 	
