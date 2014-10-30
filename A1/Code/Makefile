@@ -4,13 +4,14 @@
 #                                                                  #
 ####################################################################
 
-CC = mpicc 
-CFLAGS = -Wall
-CFLAGS_GCCG =  $(PAPI_INC)
+CC = mpicc
+CFLAGS = -Wall $(PAPI_INC)
 EXTRAFLAGS =
 LIBS = -lm $(PAPI_LIB)
 OUT = gccg
 OUT_BINCONV = binconv
+
+CFLAGS+=$(EXTRAFLAGS)
 
 LIBPOS=libpos.a
 AR = ar
@@ -22,13 +23,13 @@ OBJS =  $(addsuffix .o, $(basename $(SRCS)))
 all: gccg binconv
 
 %.o: s%.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS) $(CFLAGS_GCCG) $(EXTRAFLAGS)
+	$(CC) -c -o $@ $< $(CFLAGS)
 
 gccg: gccg.c $(LIBPOS)
-	$(CC) -o $(OUT) $^ $(CFLAGS) $(CFLAGS_GCCG) $(EXTRAFLAGS) $(LIBS)
+	$(CC) -o $(OUT) $^ $(CFLAGS) $(LIBS)
 
 binconv:  binconv.c
-	$(CC) -o $(OUT_BINCONV) $(CFLAGS) $(EXTRAFLAGS) binconv.c
+	$(CC) -o $(OUT_BINCONV) $(CFLAGS) $^
 
 $(LIBPOS) : $(OBJS)
 	$(AR) $(ARFLAGS) $@ $+
