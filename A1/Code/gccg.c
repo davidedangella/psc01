@@ -23,6 +23,12 @@
 #define N 4
 #endif
 
+const char *get_filename_ext(const char *filename) {
+    const char *dot = strrchr(filename, '.');
+    if(!dot || dot == filename) return "";
+    return dot + 1;
+}
+
 
 int main(int argc, char *argv[]) {
     int i;
@@ -54,9 +60,10 @@ int main(int argc, char *argv[]) {
 	gccg <format> <input file> <output prefix>
 	*/
 	if (argc!=4){
-			printf("wrong parameters!!\ncall: gccg <format> <input file> <output prefix>\n");
+			printf("wrong parameters!!\ncall: gccg <format> <input file> <output prefix>\n-format:	bin or text\n-input file:	cojack.dat (or .bin) - tjunc.dat (or .bin) - pent.dat (or .bin)\nRemember to create the .bin files first.\n");
 			exit(1);
 			}
+	
 
 
 	char *format = argv[1];
@@ -64,7 +71,15 @@ int main(int argc, char *argv[]) {
 	char *out_pref = argv[3];
 	char *outFileName=malloc(sizeof(char)*50);
 
-
+	if( strcmp(format,"text")!=0 && strcmp(format,"bin")!=0 ){
+		printf("wrong format! Insert <bin> or <text>\n");
+		exit(1);
+	}
+	if( ( strcmp(format,"text")==0 && strcmp(get_filename_ext(file_in),"dat")!=0 ) || ( strcmp(format,"bin")==0 && strcmp(get_filename_ext(file_in),"bin")!=0 ) ){
+		printf("wrong pair of <format> and <input file>!\n");
+		exit(1);
+	}	
+	
     /* measuring variables */
 #ifdef MISSES
 	long_long start_usec, end_usec;
@@ -177,4 +192,5 @@ for ( i = 0; i < 6; ++i)
 
     return 0;
 }
+
 
